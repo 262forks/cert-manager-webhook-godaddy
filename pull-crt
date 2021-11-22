@@ -1,0 +1,11 @@
+#!/bin/sh
+
+. ~/.k8s_shortcuts 
+
+SEC=$1
+
+kubectl get secret $SEC  -oyaml | grep "  tls.crt:" | awk '{print $2}' | base64 -D > $SEC.crt
+kubectl get secret $SEC  -oyaml | grep "  tls.key:" | awk '{print $2}' | base64 -D > $SEC.key
+
+openssl x509 -in $SEC.crt  -subject  -issuer  -email -startdate  -enddate -purpose  -dates 
+
